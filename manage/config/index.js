@@ -26,15 +26,35 @@ module.exports = {
             changeOrigin:true,
             pathRewrite: {'^/instrument':''}
         },
-        '/refractories':{
-            target:'http://127.0.0.1:3000/refractories',
+        '/equipment':{
+            target:'http://127.0.0.1:3000/equipment',
             changeOrigin:true,
-            pathRewrite: {'^/refractories':''}
+            pathRewrite: {'^/equipment':''}
         },
         '/chemical':{
             target:'http://127.0.0.1:3000/chemical',
             changeOrigin:true,
             pathRewrite: {'^/chemical':''}
+        },
+        '/tools':{
+            target:'http://127.0.0.1:3000/tools',
+            changeOrigin:true,
+            pathRewrite: {'^/tools':''}
+        },
+        '/material':{
+            target:'http://127.0.0.1:3000/material',
+            changeOrigin:true,
+            pathRewrite: {'^/material':''}
+        },
+        '/records':{
+            target:'http://127.0.0.1:3000/records',
+            changeOrigin:true,
+            pathRewrite: {'^/records':''}
+        },
+        '/history':{
+            target:'http://127.0.0.1:3000/history',
+            changeOrigin:true,
+            pathRewrite: {'^/history':''}
         }
     },
 
@@ -69,13 +89,14 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    // assetsPublicPath: '/',
+    assetsPublicPath: './',
 
     /**
      * Source Maps
      */
 
-    productionSourceMap: true,
+    productionSourceMap: false,
     // https://webpack.js.org/configuration/devtool/#production
     devtool: '#source-map',
 

@@ -3,10 +3,10 @@
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true" :model="filters">
 				<el-form-item>
-					<el-input size="small" v-model="filters.name" placeholder="名称" @keyup.enter="getInstrument"></el-input>
+					<el-input size="small" v-model="filters.name" placeholder="名称"></el-input>
 				</el-form-item>
 				<el-form-item>
-					<el-button size="small" type="primary" icon="el-icon-search" v-on:click="getInstrument" >查询</el-button>
+					<el-button size="small" type="primary" icon="el-icon-search" v-on:click="getTools">查询</el-button>
 				</el-form-item>
 				<el-form-item>
 					<el-button size="small" type="primary" icon="el-icon-circle-plus-outline" v-on:click="dialogForm">新建</el-button>
@@ -15,7 +15,7 @@
 		</el-col>
 
 		<el-table
-	    :data="instrument.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+	    :data="tools.slice((currentPage-1)*pageSize,currentPage*pageSize)"
 	    border
 	    stripe
 	    size="medium"
@@ -27,7 +27,7 @@
 	          <el-form-item label="名称">
 	            <span>{{ props.row.name }}</span>
 	          </el-form-item>
-	          <el-form-item label="规格/ML">
+	          <el-form-item v-show="props.row.specification" label="规格">
 	            <span>{{ props.row.specification }}</span>
 	          </el-form-item>
 	          <el-form-item label="数量">
@@ -36,33 +36,33 @@
 	          <el-form-item label="价格">
 	            <span>{{ props.row.price }}</span>
 	          </el-form-item>
-	          <el-form-item label="位置">
-	            <span>{{ props.row.location }}</span>
-	          </el-form-item>
-	          <el-form-item label="位置编号">
-	            <span>{{ props.row.locationId }}</span>
-	          </el-form-item>
-	          <el-form-item label="位置说明">
-	            <span>{{ props.row.locationDes }}</span>
+	          <el-form-item label="类别">
+	            <span>{{ props.row.category }}</span>
 	          </el-form-item>
 	          <el-form-item label="房间">
 	            <span>{{ props.row.room }}</span>
-	          </el-form-item>	          
-	          <el-form-item label="二级类别">
-	            <span>{{ props.row.secCategory }}</span>
 	          </el-form-item>
 	          <el-form-item label="空置提醒">
 	            <span>{{ props.row.vacant }}</span>
 	          </el-form-item>
 	          <el-form-item label="负责人">
 	            <span>{{ props.row.responsible }}</span>
+	          </el-form-item>		          
+	          <el-form-item label="位置">
+	            <span>{{ props.row.location }}</span>
 	          </el-form-item>
+	          <el-form-item label="位置编号">
+	            <span>{{ props.row.locationId }}</span>
+	          </el-form-item> 
+	          <el-form-itemv-show="props.row.laboratory"  label="实验室">
+	            <span>{{ props.row.laboratory }}</span>
+	          </el-form-item>   
 	          <el-form-item label="输入日期">
 	            <span>{{ props.row.inDate }}</span>
-	          </el-form-item>
-	          <el-form-item label="所属实验室">
-	            <span>{{ props.row.laboratory }}</span>
-	          </el-form-item>
+	          </el-form-item>          
+	          <el-form-item v-show="props.row.locationDes" style="width:100%" class="long-item" label="位置描述">
+	            <span>{{ props.row.locationDes }}</span>
+	          </el-form-item> 
 	        </el-form>
 	      </template>
 	    </el-table-column>
@@ -70,13 +70,13 @@
     	</el-table-column> -->
 	    <el-table-column prop="name" label="名称">
 	    </el-table-column>
-	    <el-table-column prop="specification" label="规格/ML">
-	    </el-table-column>
 	    <el-table-column prop="quantity" label="数量">
 	    </el-table-column>
-	    <el-table-column prop="secCategory" label="二级类别">
+	    <el-table-column prop="category" label="类别">
 	    </el-table-column>
-	    <el-table-column prop="room" label="房间">
+	    <el-table-column prop="location" label="位置">
+	    </el-table-column>
+	    <el-table-column prop="vacant" label="空置提醒">
 	    </el-table-column>
 	    <el-table-column prop="responsible"  label="负责人">
 	    </el-table-column>
@@ -88,58 +88,57 @@
 	    </el-table-column>
 	  </el-table>
 
-	  <el-dialog title="新增仪器信息" :visible.sync="newDialog" @close="resetForm('newForm')">
-	  	<el-form style="display: flex;display: -webkit-flex;flex-wrap: wrap" label-width="80px" :model="newForm" ref="newForm" :rules="rules">
+	  <el-dialog title="新增工具信息" :visible.sync="newDialog" @close="resetForm('newForm')">
+		  <el-form style="display: flex;display: -webkit-flex;flex-wrap: wrap" label-width="80px" :model="newForm" ref="newForm" :rules="rules">	
 		    <el-form-item  label="名称" prop="name">
 		      <el-input v-model="newForm.name" auto-complete="off"></el-input>
-		    </el-form-item>
-		    <el-form-item label="规格/ML" prop="specification">
-		      <el-input v-model="newForm.specification" auto-complete="off"></el-input>
 		    </el-form-item>	
-		    <el-form-item label="数量" prop="quantity">
-		      <el-input v-model="newForm.quantity" auto-complete="off"></el-input>
-		    </el-form-item>
+		    <el-form-item  label="规格" prop="specification">
+		      <el-input v-model="newForm.specification" auto-complete="off"></el-input>
+		    </el-form-item>	 	 
 		    <el-form-item label="价格" prop="price">
 		      <el-input v-model.number="newForm.price" auto-complete="off"></el-input>
-		    </el-form-item>
-		    <el-form-item label="负责人" prop="responsible">
-		      <el-input v-model="newForm.responsible" auto-complete="off"></el-input>
 		    </el-form-item>    
-		    <el-form-item label="实验室" prop="laboratory">
-		      <el-input v-model="newForm.laboratory" auto-complete="off"></el-input>
-		    </el-form-item>
+		    <el-form-item label="数量" prop="quantity">
+		      <el-input v-model="newForm.quantity" auto-complete="off"></el-input>
+		    </el-form-item> 	 
 		    <el-form-item label="位置" prop="location">
 		      <el-input v-model="newForm.location" auto-complete="off"></el-input>
-		    </el-form-item>
+		    </el-form-item>  
 		    <el-form-item label="房间" prop="room">
 		      <el-input v-model="newForm.room" auto-complete="off"></el-input>
-		    </el-form-item> 
+		    </el-form-item>
 		    <el-form-item label="位置编号" prop="locationId">
 		      <el-input v-model="newForm.locationId" auto-complete="off"></el-input>
-		    </el-form-item>  
-		    <el-form-item label="空置提醒" prop="vacant">
-		      <el-radio-group v-model="newForm.vacant">
-		      	<el-radio label="否"></el-radio>
-		      	<el-radio label="是"></el-radio>
-		      </el-radio-group>
-		    </el-form-item>			    
-		    <el-form-item label="二级类别" prop="secCategory">
-		      <el-select v-model="newForm.secCategory" placeholder="请选择仪器类别">
-			      <el-option label="玻璃仪器类-烧器类" value="玻璃仪器类-烧器类"></el-option>
-			      <el-option label="玻璃仪器类-皿管类" value="玻璃仪器类-皿管类"></el-option>
-			      <el-option label="玻璃仪器类-量器类" value="玻璃仪器类-量器类"></el-option>
-			      <el-option label="玻璃仪器类-瓶斗类" value="玻璃仪器类-瓶斗类"></el-option>
-			      <el-option label="用品类-实验用品类" value="用品类-实验用品类"></el-option>
+		    </el-form-item>   
+		    <el-form-item label="负责人" prop="responsible">
+		      <el-input v-model="newForm.responsible" auto-complete="off"></el-input>
+		    </el-form-item> 
+		    <el-form-item label="实验室" prop="laboratory">
+		      <el-input v-model="newForm.laboratory" auto-complete="off"></el-input>
+		    </el-form-item> 
+		    <el-form-item label="类别" prop="category">
+		      <el-select v-model="newForm.category" placeholder="请选择类别">
+			      <el-option label="实验用品" value="实验用品"></el-option>
+			      <el-option label="水处理用品" value="水处理用品"></el-option>
+			      <el-option label="防护用品" value="防护用品"></el-option>
+			      <el-option label="实验用品 设备配件" value="实验用品 设备配件"></el-option>
+			      <el-option label="设备类" value="设备类"></el-option>
 			    </el-select>
 		    </el-form-item>	  			    
 		    <el-form-item label="输入日期" prop="inDate">
 		      <el-date-picker v-model="newForm.inDate" type="date" value-format="yyyy-MM-dd" placeholder="选择日期"></el-date-picker>
 		    </el-form-item>
-		  	<el-form-item class="dialog-long-item" width="100%" label="位置说明" prop="locationDes">
+		    <el-form-item label="空置提醒" prop="vacant">
+		      <el-radio-group v-model="newForm.vacant">
+		      	<el-radio label="否"></el-radio>
+		      	<el-radio label="是"></el-radio>
+		      </el-radio-group>
+		    </el-form-item>
+		  	<el-form-item class="dialog-long-item" label="位置说明" prop="locationDes">
 		      <el-input type="textarea" v-model="newForm.locationDes"  auto-complete="off"></el-input>
 		    </el-form-item>
 		  </el-form>
-
 		  <div slot="footer" class="dialog-footer">
 		    <el-button @click="resetForm('newForm')">取 消</el-button>
 		    <el-button type="primary" @click="checkInformation">确 定</el-button>
@@ -151,7 +150,6 @@
 		  	<el-form-item  label="申请信息" >
 		      <span style="margin-left:12px">{{activenewApplication.name}},</span>
 		      <span style="margin-left:12px">规格：{{activenewApplication.specification}},</span>
-		      <span style="margin-left:12px">库存：{{activenewApplication.quantity}},</span>
 		      <span style="margin-left:12px">申请人：{{nickName}}</span>
 		    </el-form-item>	    
 		  	<el-form-item  label="数量" label-width="100px" prop="amount">
@@ -160,13 +158,14 @@
 		    <el-form-item  label="日期" label-width="100px" prop="date">
 		      <el-date-picker type="date" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="applicationForm.date" style="width: 60%;"></el-date-picker>
 		    </el-form-item>		    
-		    <el-form-item  label="借用说明" label-width="100px" prop="instructions">
-		      <el-input type="textarea" v-model="applicationForm.instructions" style="width: 80%;"></el-input>
+		    <el-form-item  label="借用说明" label-width="100px" prop="explanation">
+		      <el-input type="textarea" v-model="applicationForm.explanation" style="width: 80%;"></el-input>
 		    </el-form-item>	
 		  </el-form>
 		  <div slot="footer" class="dialog-footer">
+		    <!-- <el-button @click="resetForm('applicationForm')">重 置</el-button> -->
 		    <el-button @click="resetForm('applicationForm')">取 消</el-button>
-		    <el-button type="primary" @click="checkBorrow">确 定</el-button>
+				<el-button type="primary" @click="checkBorrow">确 定</el-button>
 		  </div>
 		</el-dialog>
 
@@ -178,7 +177,7 @@
 	      :page-sizes="[5, 10, 15, 20]"
 	      :page-size="pageSize"
 	      layout="total, sizes, prev, pager, next, jumper"
-	      :total="this.instrument.length">
+	      :total="this.tools.length">
 	    </el-pagination>
 	  </div>
 
@@ -194,46 +193,45 @@ export default{
 			filters: {
 				name: ''
 			},
-			instrument: [],
+			tools: [],
 			loading: false,
-			newDialog: false,
+			newDialog: false,			
+			checkOk: false,			
+			checkOk2: false,			
 			newApplication: false,
-			checkOk: false,
-			checkOk2: false,
-			currentPage: 1,
-			pageSize: 10,
 			activenewApplication: '',
 			activeDelete: '',
+			currentPage: 1,
+			pageSize: 10,
 			newForm: {
         name: '',
-        specification: '',
+        specification:'',
         quantity: '',
+        laboratory: '',
         price: '',
         locationId: '',
         location: '',
         locationDes: '',
-        secCategory: '',
-        room: '',
+        inDate: '',
         vacant: '',
         responsible: '',
-        inDate: '',
-        laboratory: ''
+        room: '',
+        category: ''
       },
-      // newForm3: {
-      //   locationDes: ''
-      // },
+      applicationForm: {
+      	amount: '',
+      	date: '',
+      	instructions: ''
+      },
       rules: {
         name: [
-          { required: true, message: '请填写仪器名称', trigger: 'changed' }
-        ],
-        specification: [
-          { required: true, message: '请填写仪器规格', trigger: 'changed' }
+          { required: true, message: '请填写工具名称', trigger: 'changed' }
         ],
         quantity: [
-          { required: true, message: '请填写仪器数量', trigger: 'changed' }
+          { required: true, message: '请填写工具数量', trigger: 'changed' }
         ],
         price: [
-          { required: true, message: '请填写仪器价格'},
+          { required: true, message: '请填写工具价格', trigger: 'changed' },
           { type: 'number', message: '请输入数字' }
         ],
         locationId: [
@@ -241,9 +239,6 @@ export default{
         ],
         location: [
           { required: true, message: '请填写位置', trigger: 'changed' }
-        ],
-        secCategory: [
-          { required: true, message: '请选择仪器分类', trigger: 'changed' }
         ],
         room: [
           { required: true, message: '请填写房间', trigger: 'changed' }
@@ -259,12 +254,10 @@ export default{
         ],
         laboratory: [
           { required: true, message: '请填写实验室', trigger: 'changed' }
+        ],
+        category: [
+          { required: true, message: '请选择设备分类', trigger: 'changed' }
         ]
-      },
-      applicationForm: {
-      	amount: '',
-      	date: '',
-      	instructions: ''
       },
       rules2: {
         quantity: [
@@ -280,13 +273,13 @@ export default{
 		...mapState(['nickName'])
 	},
 	methods: {
-		getInstrument() {
+		getTools() {
 			this.loading = true
-			// console.log(this.filters.name)
+			console.log(this.filters.name)
 			let para = {
 				name: this.filters.name
 			}
-			axios.get("/instrument",{ params: para }).then((response)=>{
+			axios.get("/tools",{ params: para }).then((response)=>{
 				let res = response.data;
 				let nowDate = new Date().getTime()
 				for(let i=0;i<res.result.length;i++){
@@ -297,22 +290,19 @@ export default{
 						if( interval > 365 ){
 							res.result[i].name = '(空置)'+res.result[i].name
 						}
-					}	
+					}
 				}
-				this.instrument = res.result;
+				this.tools = res.result;
 				this.loading = false
 			}).catch((err)=>{
 				console.log(err);
-			});			
+			});	
 		},
 		handleApplication(row) {
-      console.log(row);
       this.activenewApplication = row;
-      console.log(this.activenewApplication.name);
 
       if( this.nickName ) {
-				this.newApplication = true
-				
+				this.newApplication = true			
 			} else {
 				this.$message({
           message: '请先登录',
@@ -320,77 +310,6 @@ export default{
           center: true
         });
 			}
-    },
-    handleDelete(row) {
-      console.log(row);
-      this.activeDelete = row;
-
-      if( this.nickName ) {
-				this.$confirm('是否确定该物资?', '提示', {
-	        confirmButtonText: '确定',
-	        cancelButtonText: '取消',
-	        type: 'warning'
-	      }).then(() => {
-	        axios.post('/instrument/delete',{Id: this.activeDelete.Id}).then((response)=>{
-						let res = response.data;
-						if (res.status==='0'){
-							this.$message({ message: '删除成功！',type: 'success',center: true });
-							this.getInstrument()			
-						} else {
-							this.$message({ message: '出错，请稍后再试！',type: 'warning',center: true });
-						}
-					})	
-	      })			
-			} else {
-				this.$message({
-          message: '请先登录',
-          type: 'warning',
-          center: true
-        });
-			}
-    },
-    checkInformation() {   //检验新建表单信息是否为空
-    	this.checkOk = false;
-    	for(let key in this.newForm) {
-    		if(key!='locationDes'){
-    			if(!this.newForm[key]) {
-	    			this.$message({ message: '请将仪器信息填写完整',type: 'warning',center: true });
-	    			this.checkOk = false;
-	  			  break;	
-	    		} else {
-	    			this.checkOk = true;
-	    		}
-    		}		
-    	}
-    	if(this.checkOk) {
-    		this.submitInformation();
-    	}    	
-    },
-    submitInformation() {   //提交新建信息
-    	axios.post('/instrument/add',{
-				name: this.newForm.name,
-        specification: this.newForm.specification,
-        locationDes: this.newForm.locationDes,
-        locationId: this.newForm.locationId,
-        location: this.newForm.location,
-        responsible: this.newForm.responsible,
-        inDate: this.newForm.inDate,
-        vacant: this.newForm.vacant,
-        secCategory: this.newForm.secCategory,
-        quantity: this.newForm.quantity,
-        price: this.newForm.price,
-        room: this.newForm.room,
-        laboratory: this.newForm.laboratory
-			}).then((response)=>{
-				let res = response.data;
-				if (res.status==='0'){
-					this.newDialog = false
-					this.$message({ message: '新建仪器信息成功！',type: 'success',center: true });
-					this.getInstrument()			
-				} else {
-					this.$message({ message: '新建仪器信息出错，请稍后再试！',type: 'warning',center: true });
-				}
-			})	
     },    
     checkBorrow() {   //检验借用信息是否为空
     	this.checkOk2 = false;
@@ -419,18 +338,89 @@ export default{
         date:          this.applicationForm.date,
         responsible:   this.activenewApplication.responsible,
         instructions:  this.applicationForm.instructions,
-        category:      '玻璃塑料仪器',
+        category:      '小工具',
         dangerous:     '否' 
 			}).then((response)=>{
 				let res = response.data;
 				if (res.status==='0'){
 					this.newApplication = false
 					this.$message({ message: '借用申请提交成功！',type: 'success',center: true });	
-					this.getInstrument();		
+					this.getTools()			
 				} else {
 					this.$message({ message: '申请提交出错，请稍后再试！',type: 'warning',center: true });
 				}
 			})
+    },
+    handleDelete(row) {
+      console.log(row);
+      this.activeDelete = row;
+
+      if( this.nickName ) {
+				this.$confirm('是否确定该物资?', '提示', {
+	        confirmButtonText: '确定',
+	        cancelButtonText: '取消',
+	        type: 'warning'
+	      }).then(() => {
+	        axios.post('/tools/delete',{Id: this.activeDelete.Id}).then((response)=>{
+						let res = response.data;
+						if (res.status==='0'){
+							this.$message({ message: '删除成功！',type: 'success',center: true });
+							this.getTools()			
+						} else {
+							this.$message({ message: '出错，请稍后再试！',type: 'warning',center: true });
+						}
+					})	
+	      })			
+			} else {
+				this.$message({
+          message: '请先登录',
+          type: 'warning',
+          center: true
+        });
+			}
+    },
+    checkInformation() {   //检验新建表单信息是否为空
+    	this.checkOk = false;
+    	for(let key in this.newForm) {
+    		if(key!='specification'&&key!='locationDes'){
+	    		if(!this.newForm[key]) {
+	    			this.$message({ message: '请将药品信息填写完整',type: 'warning',center: true });
+	    			this.checkOk = false;
+	  			  break;	
+	    		} else {
+	    			this.checkOk = true;
+	    		}    			
+    		}
+    	}
+    	if(this.checkOk) {
+    		this.submitInformation();
+    	}    	
+    },
+    submitInformation() {   //提交新建信息
+    	axios.post('/tools/add',{
+				name: this.newForm.name,
+        specification: this.newForm.specification,
+        locationDes: this.newForm.locationDes,
+        locationId: this.newForm.locationId,
+        location: this.newForm.location,
+        responsible: this.newForm.responsible,
+        inDate: this.newForm.inDate,
+        vacant: this.newForm.vacant,
+        category: this.newForm.category,
+        quantity: this.newForm.quantity,
+        price: this.newForm.price,
+        room: this.newForm.room,
+        laboratory: this.newForm.laboratory
+			}).then((response)=>{
+				let res = response.data;
+				if (res.status==='0'){
+					this.newDialog = false
+					this.$message({ message: '新建小工具信息成功！',type: 'success',center: true });
+					this.getTools()			
+				} else {
+					this.$message({ message: '新建小工具信息出错，请稍后再试！',type: 'warning',center: true });
+				}
+			})   	
     },
 		resetForm(formName) {
       this.$refs[formName].resetFields();
@@ -445,15 +435,15 @@ export default{
 	        specification: '',
 	        quantity: '',
 	        price: '',
+	        locationDes: '',
 	        locationId: '',
 	        location: '',
-	        locationDes: '',
-	        secCategory: '',
+	        category: '',
 	        room: '',
 	        vacant: '',
 	        responsible: '',
 	        inDate: '',
-	        laboratory: ''
+        	laboratory: ''
 	      }
 			} else {
 				this.$message({
@@ -461,21 +451,23 @@ export default{
           type: 'warning',
           center: true
         });
-			}
+			}	
 		},
-		// newInstrument() {
-		// 	this.newDialog = false
-		// },
+		newTools() {
+			this.newDialog = false
+		},
 		handleSizeChange(val) {
 			this.pageSize = val;
+			// this.getTools();
 		},
 		handleCurrentChange(val) {
 			this.currentPage = val;
+			// this.getTools();
 		}
 		
 	},
 	mounted() {
-		this.getInstrument();
+		this.getTools();
 	}
 }
 </script>

@@ -13,14 +13,17 @@ Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(Vuex)
 
-
 const store = new Vuex.Store({
 	state: {
-		nickName:''
+		nickName:'',
+		authority:'',
+		laboratory:''
 	},
 	mutations: {
-		updateUserInfo(state,nickName) {
-			state.nickName = nickName
+		updateUserInfo(state,info) {
+			state.nickName = info.name
+			state.authority = info.authority
+			state.laboratory = info.laboratory
 		} 
 	}
 })

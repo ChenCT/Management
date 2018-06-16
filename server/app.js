@@ -1,3 +1,4 @@
+//引入模块
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -8,18 +9,21 @@ var bodyParser = require('body-parser');
 var mysql = require('mysql');
 myConnection = require('express-myconnection'),
 dbOptions = {
-    host: 'localhost',
-    user: 'root',
-    password: 'shumei1404',
+    host: '120.79.142.109',
+    user: '*****',
+    password: '*****',
     port: 3306,
-    database: 'manage'  
+    database: '*****'
 };
 
 var index = require('./routes/index');
 var users = require('./routes/users');
 var instrument = require('./routes/instrument');
-var refractories = require('./routes/refractories');
+var equipment = require('./routes/equipment');
+var tools = require('./routes/tools');
 var chemical = require('./routes/chemical');
+var material = require('./routes/material');
+var history = require('./routes/history');
 
 var app = express();
 
@@ -33,13 +37,18 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+// app.use(express.static(path.join(__dirname,'public'))); 
+app.use(express.static(path.join(__dirname,'dist'))); 
 app.use(myConnection(mysql, dbOptions, 'single')); //作为中间件来使用
 
 app.use('/', index);
 app.use('/users', users);
 app.use('/instrument', instrument);
-app.use('/refractories', refractories);
+app.use('/tools', tools);
+app.use('/equipment', equipment);
 app.use('/chemical', chemical);
+app.use('/material', material);
+app.use('/history', history);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

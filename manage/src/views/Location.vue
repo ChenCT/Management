@@ -1,12 +1,10 @@
 <template>
 	<div>
-		<img style="padding:10px" src="@/assets/image/B204平面图.jpg">
-		<img style="padding:10px" src="@/assets/image/试验台1.png">
-		<img style="padding:10px" src="@/assets/image/试验台2.png">
-		<img style="padding:10px" src="@/assets/image/试验台7.png">
-		</img>
-		
-
+		<img style="padding:10px" src="@/assets/image/B204.jpg">
+		<img style="padding:10px" src="@/assets/image/table1.png">
+		<img style="padding:10px" src="@/assets/image/table2.png">
+		<img style="padding:10px" src="@/assets/image/table7.png">
+		</img>		
 	</div>
 </template>
 

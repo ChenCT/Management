@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <!-- <img src="./assets/logo.png"> -->
     <router-view/>
   </div>
 </template>
@@ -29,8 +28,8 @@ export default {
   width: 90%;
 }
 
-.dialog-long-item >.el-form-item__content {
-  width: 85%;
-  float: left;
+.dialog-long-item {
+  width: 90%;
 }
+
 </style>
